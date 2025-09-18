@@ -1,4 +1,4 @@
-import mostrarMenu from './utils/menu.js';
+import mostrarMenu from './helpers/menu.js';
 import { listarTareas, agregarTarea, editarTarea, eliminarTarea } from './controllers/tareasController.js';
 
 async function main() {

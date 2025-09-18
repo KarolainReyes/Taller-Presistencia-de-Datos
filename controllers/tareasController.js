@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { tareas } from '../data/tareas.js';
+import { tareas } from '../models/tareas.js';
 
 export async function agregarTarea() {
   const { descripcion } = await inquirer.prompt([
