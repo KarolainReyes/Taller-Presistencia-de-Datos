@@ -38,14 +38,14 @@ export async function agregarTarea() {
 export async function listarTareas() {
   try {
       const contenido = await fs.readFile(RUTA_ARCHIVO, "utf-8");
-      const datos = JSON.parse(contenido)
+      const datos = JSON.parse(contenido);
     
-  if (tareas.length === 0) {
+  if (!Array.isArray(datos) || datos.length === 0) {
     console.log('📭 No hay tareas registradas.');
     return;
   } 
     console.log('\n📋 Lista de tareas:');
-    tareas.forEach((tarea, i) => {
+    datos.forEach((tarea, i) => {
     const estado = tarea.completada ? '✅' : '❌';
     console.log(`${i + 1}. [${estado}] ${tarea.descripcion}`);
   });
