@@ -1,5 +1,8 @@
 import inquirer from 'inquirer';
 import { tareas } from '../models/tareas.js';
+import fs from 'fs/promises';
+
+const RUTA_ARCHIVO = "./tareas.json"
 
 export async function agregarTarea() {
   const { descripcion } = await inquirer.prompt([
@@ -12,21 +15,47 @@ export async function agregarTarea() {
     completada: false
   };
 
+  try {
+    let datos = [];
+
+    try {
+      const contenido = await fs.readFile(RUTA_ARCHIVO, "utf-8");
+      datos = JSON.parse(contenido)
+    } catch (error) {
+      datos = [];
+    }
+
+  datos.push(nueva);
   tareas.push(nueva);
-  console.log('✅ Tarea agregada.');
+
+  await fs.writeFile(RUTA_ARCHIVO, JSON.stringify(datos, null, 4));
+  console.log("Tarea agregadaa");
+} catch (error) {
+  console.log ("Error al agregar la tarea: ", error);
+}
 }
 
-export function listarTareas() {
+export async function listarTareas() {
+  try {
+      const contenido = await fs.readFile(RUTA_ARCHIVO, "utf-8");
+      const datos = JSON.parse(contenido)
+    
   if (tareas.length === 0) {
     console.log('📭 No hay tareas registradas.');
     return;
-  }
-
-  console.log('\n📋 Lista de tareas:');
-  tareas.forEach((tarea, i) => {
+  } 
+    console.log('\n📋 Lista de tareas:');
+    tareas.forEach((tarea, i) => {
     const estado = tarea.completada ? '✅' : '❌';
     console.log(`${i + 1}. [${estado}] ${tarea.descripcion}`);
   });
+} catch (error) {
+  if (error.code === "ENOENT"){
+    console.log ("No hay archivo de tareas todavia.");
+  } else {
+    console.log ("Error al leer las tareas: ", error);
+    }
+  } 
 }
 
 export async function editarTarea() {
