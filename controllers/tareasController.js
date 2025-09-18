@@ -59,27 +59,56 @@ export async function listarTareas() {
 }
 
 export async function editarTarea() {
-  if (tareas.length === 0) return console.log('⚠️ No hay tareas para editar.');
 
-  const { indice } = await inquirer.prompt([
-    {
-      type: 'list',
-      name: 'indice',
-      message: 'Selecciona una tarea para editar:',
-      choices: tareas.map((t, i) => ({
-        name: t.descripcion,
-        value: i
-      }))
-    }
-  ]);
+  try {
+    const contenido = await fs.readFile(RUTA_ARCHIVO, "utf-8");
+    const tareas = JSON.parse(contenido);
 
-  const { nuevaDescripcion } = await inquirer.prompt([
-    { type: 'input', name: 'nuevaDescripcion', message: 'Nueva descripción:' }
-  ]);
-
-  tareas[indice].descripcion = nuevaDescripcion.trim();
-  console.log('✏️ Tarea actualizada.');
+if (!Array.isArray (tareas) || tareas.length === 0) {
+    console.log('⚠️ No hay tareas para editar.');
 }
+
+const { indice } = await inquirer.prompt([
+  {
+    type: 'list',
+    name: 'indice',
+    message: 'Selecciona una tarea para editar:',
+    choices: tareas.map((t, i) => ({
+      name: t.descripcion,
+      value: i
+    }))
+  }
+]);
+
+const { nuevaDescripcion } = await inquirer.prompt([
+  { type: 'input', 
+    name: 'nuevaDescripcion', 
+    message: 'Nueva descripción:' }
+]);
+
+tareas[indice].descripcion = nuevaDescripcion.trim();
+
+datos = datos.map(t =>
+  t.i === indice 
+  ? { ...t, descripcion: nuevaDescripcion.trim()}
+  :t
+); 
+
+await fs.writeFile(RUTA_ARCHIVO, JSON.stringify(datos, null, 4));
+console.log('✏️ Tarea actualizada.');
+} catch (error){
+if (error.code === "ENOENT") {
+  console.log ("No hay archivo de tareas todavia.")
+} else {
+  console.log ("⚠️ No hay tareas para editar.", error)
+}
+  }
+    }
+
+
+
+  
+
 
 export async function eliminarTarea() {
   if (tareas.length === 0) return console.log('⚠️ No hay tareas para eliminar.');
