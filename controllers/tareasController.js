@@ -68,6 +68,8 @@ export async function editarTarea() {
       console.log('⚠️ No hay tareas para editar.');
     }
 
+  
+
     const { indice } = await inquirer.prompt([
       {
         type: 'list',
@@ -80,22 +82,55 @@ export async function editarTarea() {
       }
     ]);
 
-    const { nuevaDescripcion } = await inquirer.prompt([
+    const { opcion } = await inquirer.prompt([
       {
         type: 'input',
-        name: 'nuevaDescripcion',
-        message: 'Nueva descripción:'
+        name: 'opcion',
+        message: 'Seleccione una opción:',
+        choices: [
+          {name: 'Editar descripcion', value: 'descripcion'},
+          {name: 'Cambiar estado (Completadas/Pendientes)', value: 'estado'}
+        ]
       }
     ]);
 
-    tareas[indice].descripcion = nuevaDescripcion.trim();
-
     tareas = tareas.map(t =>
       t.i === indice
-        ? { ...t, descripcion: nuevaDescripcion.trim() }
+        ? { ...t, descripcion: opcion.trim() }
         : t
     );
 
+    let tarea = tarea.find( t => t.indice === indice)
+
+    if (opcion.includes ('descripcion')){
+      const { nuevaDescripcion } = await inquirer.prompt([
+        {
+          type: 'input',
+          name: 'nuevaDescripcion',
+          message: 'Nueva descripcion de la tarea: ',
+          default: tarea.descripcion
+        }
+      ]);
+      tareas[indice].descripcion = nuevaDescripcion.trim();
+    }
+
+    if (opcion.includes ('estado')){
+      const { nuevoEstado } = await inquirer.prompt([
+        {
+          type: 'list',
+          name: 'nuevoEstado',
+          message: 'Nuevo estado de la tarea: ',
+          choices:["true","false"]
+        }
+      ]);
+      tareas[indice].completada = nuevoEstado.trim();
+      
+      }
+    
+
+    
+
+    
     await fs.writeFile(RUTA_ARCHIVO, JSON.stringify(tareas, null, 4));
     console.log('✏️ Tarea actualizada.');
   } catch (error) {
