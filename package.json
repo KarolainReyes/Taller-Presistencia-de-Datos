@@ -12,7 +12,8 @@
   "description": "",
   "dependencies": {
     "inquirer": "^12.9.6",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "mongodb": "^6.20.0"
   },
   "repository": {
     "type": "git",

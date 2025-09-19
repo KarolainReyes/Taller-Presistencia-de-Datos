@@ -2,38 +2,28 @@ import inquirer from 'inquirer';
 import { tareas } from '../models/tareas.js';
 import fs from 'fs/promises';
 import _ from 'lodash';
+import { MongoClient } from "mongodb"
 
-const RUTA_ARCHIVO = "./tareas.json"
+const uri = "direcciondeluri";
+const cliente = new MongoClient(uri);
+
+
+export async function conectarCliente(){
+  await cliente.connect();
+}
+
+export async function desconectarCliente(){
+  await cliente.close();
+}
+
+export async function DBVentas(){
+  const db = cliente.db("donega");
+  const coleccion = db.collection("ventas");
+}
 
 export async function agregarTarea() {
-  const { descripcion } = await inquirer.prompt([
-    { type: 'input', name: 'descripcion', message: 'Descripción de la tarea:' }
-  ]);
-
-  const nueva = {
-    id: Date.now(),
-    descripcion: descripcion.trim(),
-    completada: false
-  };
-
-  try {
-    let datos = [];
-
-    try {
-      const contenido = await fs.readFile(RUTA_ARCHIVO, "utf-8");
-      datos = JSON.parse(contenido)
-    } catch (error) {
-      datos = [];
-    }
-
-    datos.push(nueva);
-    tareas.push(nueva);
-
-    await fs.writeFile(RUTA_ARCHIVO, JSON.stringify(datos, null, 4));
-    console.log("Tarea agregadaa");
-  } catch (error) {
-    console.log("Error al agregar la tarea: ", error);
-  }
+  await conectarCliente();
+  await DBVentas();
 }
 
 export async function listarTareas() {
