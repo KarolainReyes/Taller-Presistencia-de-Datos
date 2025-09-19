@@ -25,89 +25,91 @@ export async function agregarTarea() {
       datos = [];
     }
 
-  datos.push(nueva);
-  tareas.push(nueva);
+    datos.push(nueva);
+    tareas.push(nueva);
 
-  await fs.writeFile(RUTA_ARCHIVO, JSON.stringify(datos, null, 4));
-  console.log("Tarea agregadaa");
-} catch (error) {
-  console.log ("Error al agregar la tarea: ", error);
-}
+    await fs.writeFile(RUTA_ARCHIVO, JSON.stringify(datos, null, 4));
+    console.log("Tarea agregadaa");
+  } catch (error) {
+    console.log("Error al agregar la tarea: ", error);
+  }
 }
 
 export async function listarTareas() {
   try {
-      const contenido = await fs.readFile(RUTA_ARCHIVO, "utf-8");
-      const datos = JSON.parse(contenido);
-    
-  if (!Array.isArray(datos) || datos.length === 0) {
-    console.log('📭 No hay tareas registradas.');
-    return;
-  } 
+    const contenido = await fs.readFile(RUTA_ARCHIVO, "utf-8");
+    const datos = JSON.parse(contenido);
+
+    if (!Array.isArray(datos) || datos.length === 0) {
+      console.log('📭 No hay tareas registradas.');
+      return;
+    }
     console.log('\n📋 Lista de tareas:');
     datos.forEach((tarea, i) => {
-    const estado = tarea.completada ? '✅' : '❌';
-    console.log(`${i + 1}. [${estado}] ${tarea.descripcion}`);
-  });
-} catch (error) {
-  if (error.code === "ENOENT"){
-    console.log ("No hay archivo de tareas todavia.");
-  } else {
-    console.log ("Error al leer las tareas: ", error);
+      const estado = tarea.completada ? '✅' : '❌';
+      console.log(`${i + 1}. [${estado}] ${tarea.descripcion}`);
+    });
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      console.log("No hay archivo de tareas todavia.");
+    } else {
+      console.log("Error al leer las tareas: ", error);
     }
-  } 
+  }
 }
 
 export async function editarTarea() {
 
   try {
     const contenido = await fs.readFile(RUTA_ARCHIVO, "utf-8");
-    const tareas = JSON.parse(contenido);
+    let tareas = JSON.parse(contenido);
 
-if (!Array.isArray (tareas) || tareas.length === 0) {
-    console.log('⚠️ No hay tareas para editar.');
-}
-
-const { indice } = await inquirer.prompt([
-  {
-    type: 'list',
-    name: 'indice',
-    message: 'Selecciona una tarea para editar:',
-    choices: tareas.map((t, i) => ({
-      name: t.descripcion,
-      value: i
-    }))
-  }
-]);
-
-const { nuevaDescripcion } = await inquirer.prompt([
-  { type: 'input', 
-    name: 'nuevaDescripcion', 
-    message: 'Nueva descripción:' }
-]);
-
-tareas[indice].descripcion = nuevaDescripcion.trim();
-
-datos = datos.map(t =>
-  t.i === indice 
-  ? { ...t, descripcion: nuevaDescripcion.trim()}
-  :t
-); 
-
-await fs.writeFile(RUTA_ARCHIVO, JSON.stringify(datos, null, 4));
-console.log('✏️ Tarea actualizada.');
-} catch (error){
-if (error.code === "ENOENT") {
-  console.log ("No hay archivo de tareas todavia.")
-} else {
-  console.log ("⚠️ No hay tareas para editar.", error)
-}
-  }
+    if (!Array.isArray(tareas) || tareas.length === 0) {
+      console.log('⚠️ No hay tareas para editar.');
     }
 
+    const { indice } = await inquirer.prompt([
+      {
+        type: 'list',
+        name: 'indice',
+        message: 'Selecciona una tarea para editar:',
+        choices: tareas.map((t, i) => ({
+          name: t.descripcion,
+          value: i
+        }))
+      }
+    ]);
+
+    const { nuevaDescripcion } = await inquirer.prompt([
+      {
+        type: 'input',
+        name: 'nuevaDescripcion',
+        message: 'Nueva descripción:'
+      }
+    ]);
+
+    tareas[indice].descripcion = nuevaDescripcion.trim();
+
+    tareas = tareas.map(t =>
+      t.i === indice
+        ? { ...t, descripcion: nuevaDescripcion.trim() }
+        : t
+    );
+
+    await fs.writeFile(RUTA_ARCHIVO, JSON.stringify(tareas, null, 4));
+    console.log('✏️ Tarea actualizada.');
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      console.log("No hay archivo de tareas todavia.")
+    } else {
+      console.log("⚠️ No hay tareas para editar.", error)
+    }
+  }
+}
 
 
-  
+
+
 
 
 export async function eliminarTarea() {
