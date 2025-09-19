@@ -113,6 +113,14 @@ export async function editarTarea() {
 
 
 export async function eliminarTarea() {
+  
+  try {
+    const contenido = fs.readFile(RUTA_ARCHIVO, "utf-8");
+    let tareas = JSON.parse(contenido);
+    
+    if (!Array.isArray(tareas))
+  }
+
   if (tareas.length === 0) return console.log('⚠️ No hay tareas para eliminar.');
 
   const { indice } = await inquirer.prompt([
