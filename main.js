@@ -1,5 +1,6 @@
-import mostrarMenu from './helpers/menu.js';
-import { listarTareas, agregarTarea, editarTarea, eliminarTarea } from './controllers/tareasController.js';
+import { mostrarMenu, mostrarMenuListar } from './helpers/menu.js';
+import { listarTareas, agregarTarea, listarTareasAlfabetica, editarTarea, eliminarTarea} from './controllers/tareasController.js';
+
 
 async function main() {
   let salir = false;
@@ -12,13 +13,31 @@ async function main() {
         await agregarTarea();
         break;
       case '2':
-        listarTareas();
+        let salirLista = false
+        while (salirLista == false) {
+          const opcionLista = await mostrarMenuListar();
+          switch (opcionLista) {
+            case '1':
+              await listarTareas();
+              salirLista = true;
+              break;
+            case '2':
+              await listarTareasAlfabetica();
+              salirLista = true;
+              break;
+            case '3':
+              salirLista = true;
+              break;
+            default:
+              break;
+          }
+        }
         break;
       case '3':
-        await editarTarea();
+       await editarTarea()
         break;
       case '4':
-        await eliminarTarea();
+await eliminarTarea()
         break;
       case '5':
         salir = true;
