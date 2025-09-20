@@ -9,8 +9,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "> _“¡Muy bonito tu sistemita con `fs`, muchach@… pero eso ya no es suficiente! Quiero la nube, quiero MongoDB, ¿o es que piensas guardar tareas en un pendrive el resto de tu vida?”_  \r > — **Don Edgar**, líder absoluto de la productividad",
   "dependencies": {
+    "chalk": "^5.6.2",
     "inquirer": "^12.9.6",
     "lodash": "^4.17.21",
     "mongodb": "^6.20.0"
